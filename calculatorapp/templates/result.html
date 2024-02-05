@@ -1,0 +1,16 @@
+<style>
+    .center{
+        margin : auto;
+        width: 50%;
+        border: 3px solid;
+        padding: 40px;
+}
+</style>
+
+<div class="center">
+    <p>Operation to Perform: {{first}}{{condition}}{{second}}</p>
+    The result is:
+        <h1>{{answer}}</h1>
+
+    <a href="{% url 'home' %}">Go Back</a>
+</div>

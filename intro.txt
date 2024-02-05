@@ -1,0 +1,113 @@
+# create the project:
+    - django-admin startproject calculator
+    - contains files like manage.py, settings.py, urls.py
+
+# create a django app: 
+    - change working directory to project directory and 
+    - python manage.py startapp calculatorapp
+    - contains files like models.py, views.py, admin.py, migrations and so on
+
+* Once the app is created, the first important thing is to register the app in the INSTALLED_APPS list in settings.py file
+
+# add routes:
+    - create a urls.py in the app directory
+    - code:
+        from django.urls import path
+        from . import views
+
+        urlpatterns = [
+            path('', views.home, name='home')
+        ]
+    
+    - register this app URL file to the project "urls.py" file
+    - code: 
+        from django.contrib import admin
+        from django.urls import path, include
+
+        urlpatterns = [
+            path('admin/', admin.site.urls),
+            path('', include('calculatorapp.urls')),
+        ]
+
+# write views:
+- two types of views:
+    1. function-based views : start with 'def' keyword
+    2. class-based views : start with 'class' keyword
+- e.g
+    def home(request):
+        pass
+
+# add template to the app
+- templates are used to render the dynamic HTML content
+- code:
+    def home(request):
+        return render(request,'home.html')
+
+- Here the 'home' view is returning the 'home.html' template
+- we need to create a templates folder in the root directory of our app, which is 'calculatorapp'
+- inside the templates folder, we need to create a 'home.html' file
+- code:
+    <form action="result">
+            <input type="number" name="num1" placeholder="Enter first number">
+            <br><br>
+            <input type="number" name="num2" placeholder="Enter second number">
+            <br><br>
+            <button type="submit" name="add">ADD</button>
+            <button type="submit" name="subtract">SUBTRACT</button>
+            <button type="submit" name="multiply">MULTIPLY</button>
+            <button type="submit" name="divide">DIVIDE</button>
+        </form>
+
+- <form action="result"> means that on submitting the form it will redirect to the result URL
+
+# add URl for the result page
+- create the result view and add a template and URl for it
+- updated urls.py:
+            from django.urls import path
+            from . import views
+
+            urlpatterns = [
+                path('', views.home, name='home'),
+                path('result/', views.result, name='result')
+            ]
+
+
+# add result view
+- for views.result the code is:
+        def result(request):
+            num1 = int(request.GET.get('num1'))
+            num2 = int(request.GET.get('num2'))
+
+            if request.GET.get('add') == "":
+                ans = num1 + num2
+
+            elif request.GET.get('subtract') == "":
+                ans = num1 - num2
+
+            elif request.GET.get('multiply') == "":
+                ans = num1 * num2
+
+            else:
+                ans = num1/num2
+
+            return render(request, 'result.html', {'answer': ans})
+
+- get data from the form with request.GET.get()
+- since all buttons are given different names clicking those give the empty string value in the URl. And based on that it's adding 
+    conditions for add, subtract, multiply, divide
+- it renders the 'result.html' template with the 'ans' context.
+
+* "context" in django is a dictionary with key-value pairs that can be passed to the template
+
+# result template:
+- create a 'result.html' file inside the 'templates' folder 
+- code:
+    <div class="center">
+        The result is:
+            <h1>{{answer}}</h1>
+
+        <a href="{% url 'home' %}">Go Back</a>
+    </div>
+
+- in django, double curly brackets '{{}}' are used to display the value of variables
+- variables output the value from the context
